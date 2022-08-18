@@ -35,6 +35,15 @@ public partial class @MyInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Jumping"",
+                    ""type"": ""Button"",
+                    ""id"": ""c4f61c00-6341-4c29-a7bd-61960a17af5c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -92,6 +101,17 @@ public partial class @MyInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""Moving"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""59175274-4908-48ad-b084-38a2f49a1a0d"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jumping"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -107,6 +127,7 @@ public partial class @MyInputActions : IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Moving = m_Player.FindAction("Moving", throwIfNotFound: true);
+        m_Player_Jumping = m_Player.FindAction("Jumping", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -167,11 +188,13 @@ public partial class @MyInputActions : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_Moving;
+    private readonly InputAction m_Player_Jumping;
     public struct PlayerActions
     {
         private @MyInputActions m_Wrapper;
         public PlayerActions(@MyInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Moving => m_Wrapper.m_Player_Moving;
+        public InputAction @Jumping => m_Wrapper.m_Player_Jumping;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -184,6 +207,9 @@ public partial class @MyInputActions : IInputActionCollection2, IDisposable
                 @Moving.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMoving;
                 @Moving.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMoving;
                 @Moving.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMoving;
+                @Jumping.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJumping;
+                @Jumping.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJumping;
+                @Jumping.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJumping;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -191,6 +217,9 @@ public partial class @MyInputActions : IInputActionCollection2, IDisposable
                 @Moving.started += instance.OnMoving;
                 @Moving.performed += instance.OnMoving;
                 @Moving.canceled += instance.OnMoving;
+                @Jumping.started += instance.OnJumping;
+                @Jumping.performed += instance.OnJumping;
+                @Jumping.canceled += instance.OnJumping;
             }
         }
     }
@@ -207,5 +236,6 @@ public partial class @MyInputActions : IInputActionCollection2, IDisposable
     public interface IPlayerActions
     {
         void OnMoving(InputAction.CallbackContext context);
+        void OnJumping(InputAction.CallbackContext context);
     }
 }
